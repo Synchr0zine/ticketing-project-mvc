@@ -1,7 +1,9 @@
 package com.cydeo.controller;
 
 import com.cydeo.dto.ProjectDTO;
+import com.cydeo.dto.UserDTO;
 import com.cydeo.entity.User;
+import com.cydeo.enums.Status;
 import com.cydeo.service.ProjectService;
 import com.cydeo.service.UserService;
 import com.cydeo.service.impl.UserServiceImpl;
@@ -41,6 +43,33 @@ public class ProjectController {
     public String deleteProject(@PathVariable("projectCode") String projectCode){
 
         projectService.deleteById(projectCode);
+
+        return "redirect:/project/create";
+    }
+
+    @GetMapping("/complete/{projectCode}")
+    public String completeProject(@PathVariable("projectCode") String projectCode){
+
+        projectService.complete(projectService.findById(projectCode));
+
+        return "redirect:/project/create";
+    }
+
+    @GetMapping("/update/{projectCode}")
+    public String editUser(@PathVariable("projectCode") String projectCode, Model model ){
+
+        model.addAttribute("project",projectService.findById(projectCode));
+        model.addAttribute("managers",userService.findManagers());
+        model.addAttribute("projects", projectService.findAll());
+
+        return "/project/update";
+
+    }
+
+    @PostMapping("/update")
+    public String updateUser(@ModelAttribute("project") ProjectDTO project){
+
+        projectService.update(project);
 
         return "redirect:/project/create";
     }
